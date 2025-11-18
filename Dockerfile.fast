@@ -1,0 +1,11 @@
+# 使用最轻量级的运行时基础镜像
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-jammy-chiseled
+WORKDIR /app
+
+# 从 GitHub Actions 下载的 ./docker-build 目录复制产物
+COPY ./docker-build/BoomApi .
+# 如果有静态资源，也需要复制
+COPY src/wwwroot ./wwwroot
+
+EXPOSE 8080
+ENTRYPOINT ["./BoomApi"]
