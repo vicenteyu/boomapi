@@ -140,5 +140,5 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/boomapi
-          short-description: "🚀 16MB .NET 10 Magic: World's tiniest Native AOT Mock tool. Fast, Chiseled, and Zero-runtime."
+          short-description: "🚀 14MB .NET 10 Magic: World's tiniest Native AOT Mock tool. Fast, Chiseled, and Zero-runtime."
           readme-filepath: ./README.md

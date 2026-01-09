@@ -1,8 +1,10 @@
+# 🚀 BoomApi: The 14MB Miracle
+
 <div align="center">
   <img src="https://github.com/vicenteyu/boomapi/raw/master/logo.png" height="200" alt="BoomApi Logo">
 </div>
 
-# 🚀 BoomApi: The 14MB Miracle
+---
 
 [**简体中文**](#-简体中文) | [**English**](#-english)
 
@@ -16,7 +18,7 @@
 
 ### ✨ 核心特性
 * **⚡ 巅峰性能**：原生编译，零 GC 开销，启动速度低于 10ms。
-* **📦 极简部署**：Docker 镜像仅约 `16.53 MB`，无需安装 .NET 运行时，自包含执行。
+* **📦 极简部署**：Docker 镜像仅约 `14.18 MB`，无需安装 .NET 运行时，自包含执行。
 * **📂 文件即路由**：`/raw/example.json` 自动对应物理路径 `wwwroot/example.json`，支持所有 HTTP 方法（`GET`, `POST`, `PUT`, `DELETE`, `PATCH`）。
 * **🎨 可视化管理**：内建基于 `Tailwind CSS` 的响应式 UI，支持在线创建、预览及删除。
 * **🔒 生产就绪**：完美兼容反向代理（`X-Forwarded Headers`），支持 `Docker` 数据卷持久化。
@@ -70,7 +72,7 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 
 ### ✨ Key Features
 * **⚡ Blazing Fast**: Native compilation, zero GC overhead, sub-10ms startup time.
-* **📦 Tiny Footprint**: ~40MB Docker image, self-contained, no .NET runtime required.
+* **📦 Tiny Footprint**: `14.18 MB` Docker image, self-contained, no .NET runtime required.
 * **📂 File-based Routing**: `/raw/test.json` automatically maps to `wwwroot/test.json`. Supports all HTTP methods including `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`.
 * **🎨 Built-in Dashboard**: Minimalist responsive UI powered by `Tailwind CSS` for easy management.
 * **🔒 Proxy Ready**: Full support for `X-Forwarded-Proto` and `X-Forwarded-Host` headers.
