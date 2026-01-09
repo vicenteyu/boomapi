@@ -64,6 +64,12 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 
 ---
 
+"**Small, but Uncompromising.**" 感谢所有对极致性能有追求的开发者。如果你喜欢这个项目，请为它点亮一颗 Star 🌟。
+
+**GitHub Repository:** https://github.com/vicenteyu/boomapi
+
+---
+
 ## <a id="english"></a>🇺🇸 English
 
 **Probably the world's most lightweight API Mocking tool powered by .NET 10.**
