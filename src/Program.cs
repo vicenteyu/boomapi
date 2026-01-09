@@ -13,6 +13,8 @@ public partial class Program
 {
     static void ConfigureLogger(WebApplicationBuilder builder)
     {
+        var logPath = Path.Combine(AppContext.BaseDirectory, "logs", "logs-.txt");
+
         var loggerConfig = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console();
@@ -23,7 +25,7 @@ public partial class Program
             loggerConfig.MinimumLevel.Information();
 
         loggerConfig.WriteTo.Async(p => p.File(
-            path: "logs/logs-.txt",
+            path: logPath,
             rollingInterval: RollingInterval.Day,
             retainedFileCountLimit: 7));
 
@@ -61,14 +63,23 @@ public partial class Program
                 Directory.CreateDirectory(dataPath);
             }
 
-            if (!File.Exists(initializedFlag) && !Directory.EnumerateFileSystemEntries(dataPath).Any())
+            if (!File.Exists(initializedFlag))
             {
+                if (!Directory.EnumerateFileSystemEntries(dataPath).Any())
+                {
 
-                File.WriteAllText(Path.Combine(dataPath, "hello-world.json"), Assets.HelloJson, Encoding.UTF8);
-                File.WriteAllText(Path.Combine(dataPath, "welcome.html"), Assets.WelcomeHtml, Encoding.UTF8);
+                    File.WriteAllText(Path.Combine(dataPath, "hello-world.json"), Assets.HelloJson, Encoding.UTF8);
+                    File.WriteAllText(Path.Combine(dataPath, "welcome.html"), Assets.WelcomeHtml, Encoding.UTF8);
+
+                    Log.Information("Initial samples created successfully.");
+                }
+                else
+                {
+                    Log.Information("Data directory is not empty, skipping sample creation.");
+                }
+
                 File.WriteAllText(initializedFlag, DateTime.Now.ToString(), Encoding.UTF8);
-
-                Log.Information("Initial samples created successfully.");
+                Log.Information("Initialization flag created.");
             }
         }
         catch (UnauthorizedAccessException ex)
@@ -177,10 +188,22 @@ public partial class Program
                             window.open(`/raw/${filePath}`);
                         }
                         function deleteFile(filePath) {
-                            if(confirm('Are you sure you want to delete this endpoint?')) {
+                            if (confirm('Are you sure you want to delete this endpoint?')) {
                                 fetch(`/delete/${filePath}`, { method: 'DELETE' })
-                                    .then(res => { if(res.ok) location.reload(); })
-                                    .catch(error => console.error('Delete failed:', error));
+                                    .then(async res => {
+                                        if (res.ok) {
+                                            location.reload();
+                                        } else {
+                                            const errorData = await res.json().catch(() => ({ detail: "Unknown error" }));
+                                            const msg = errorData.detail || `Error: ${res.status}`;
+                                            alert(`Delete failed: ${msg}`);
+                                            console.error('Server error:', errorData);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        alert('Network error or server is down.');
+                                        console.error('Fetch crash:', error);
+                                    });
                             }
                         }
                     </script>
@@ -253,7 +276,7 @@ public partial class Program
             }
             catch (UnauthorizedAccessException)
             {
-                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+                return TypedResults.Problem($"Permission denied on {dataPath}. Please check UID 1654 ownership.");
             }
         });
 
@@ -268,7 +291,7 @@ public partial class Program
             }
             catch (UnauthorizedAccessException)
             {
-                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+                return TypedResults.Problem($"Permission denied on {dataPath}. Please check UID 1654 ownership.");
             }
         });
 
@@ -294,7 +317,7 @@ public partial class Program
             }
             catch (UnauthorizedAccessException)
             {
-                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+                return TypedResults.Problem($"Permission denied on {dataPath}. Please check UID 1654 ownership.");
             }
         });
 

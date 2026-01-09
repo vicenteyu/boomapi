@@ -35,9 +35,28 @@
 使用 Docker 一键运行（建议挂载数据卷以持久化数据）：
 
 ```bash
-docker run -d -p 8080:8080 -v $(pwd)/mocks:/app/data vicenteyu105/boomapi:latest
+# 创建本地目录
+mkdir -p mocks logs
+
+# 赋予权限（必须，因为容器以 UID 1654 运行）
+sudo chown -R 1654:1654 mocks logs
+
+# 一键启动
+docker run -d \
+  -p 8080:8080 \
+  -v $(pwd)/mocks:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  --name boomapi \
+  vicenteyu105/boomapi:latest
 ```
 
+### 🔒 权限与安全说明
+本镜像基于 Ubuntu Chiseled 构建，程序以非 root 用户（UID 1654）身份运行。如果挂载了本地数据卷，必须手动修正宿主机目录权限，否则程序将因无法写入数据或日志而崩溃：
+
+```bash
+# 在宿主机执行以下命令，将目录所有权授予容器用户
+sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
+```
 
 访问 http://localhost:8080 即可进入管理后台。
 
@@ -74,7 +93,22 @@ Defining an API is as simple as creating a file. No complex JSON schemas or heav
 Run with Docker:
 
 ```bash
-docker run -d -p 8080:8080 -v $(pwd)/mocks:/app/data vicenteyu105/boomapi:latest
+mkdir -p mocks logs
+sudo chown -R 1654:1654 mocks logs
+docker run -d \
+  -p 8080:8080 \
+  -v $(pwd)/mocks:/app/data \
+  -v $(pwd)/logs:/app/logs \
+  --name boomapi \
+  vicenteyu105/boomapi:latest
+```
+
+### 🔒 Permissions & Security
+This image is built on Ubuntu Chiseled and runs as a non-root user (UID 1654). If you are using bind mounts, you must adjust the host directory permissions, or the application will crash due to lack of write access:
+
+```Bash
+# Run on your host machine to grant ownership to the container user
+sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 ```
 
 Access the dashboard at http://localhost:8080.
