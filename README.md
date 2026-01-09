@@ -94,7 +94,7 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 
 Defining an API is as simple as creating a file. No complex JSON schemas or heavy DBs required:
 
-- `wwwroot/api/health.json` --> `GET/POST http://host:8080/raw/api/health.json`
+- `mocks/health.json` --> `GET/POST http://host:8080/raw/health.json`
 
 ### 🚀 Quick Start
 
