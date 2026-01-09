@@ -1,4 +1,4 @@
-<img src="https://github.com/vicenteyu/boomapi/raw/main/logo.png" height="200px" style="max-width: 100%; height: auto; max-height: 200px;">
+<img src="https://github.com/vicenteyu/boomapi/raw/master/logo.png" height="200px" style="max-width: 100%; height: auto; max-height: 200px;">
 
 # 🚀 BoomApi: The 16MB Miracle
 
