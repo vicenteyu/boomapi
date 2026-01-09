@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Serilog;
@@ -52,7 +51,6 @@ public partial class Program
         });
 
         builder.Services.AddOpenApi();
-        builder.Services.AddAntiforgery();
 
         var dataPath = Path.Combine(AppContext.BaseDirectory, "data");
         var initializedFlag = Path.Combine(dataPath, ".initialized");
@@ -99,7 +97,6 @@ public partial class Program
         }
 
         app.UseRouting();
-        app.UseAntiforgery();
 
         app.MapGet("/", async (HttpContext context, ILogger<Program> logger) =>
         {
@@ -214,9 +211,8 @@ public partial class Program
             return TypedResults.Content(htmlContent, "text/html", Encoding.UTF8);
         });
 
-        app.MapGet("/create", async (HttpContext context, IAntiforgery antiforgery) =>
+        app.MapGet("/create", async (HttpContext context) =>
         {
-            var tokens = antiforgery.GetAndStoreTokens(context);
             var htmlContent = $$"""
                 <!DOCTYPE html>
                 <html lang="en">
@@ -235,7 +231,6 @@ public partial class Program
                         </div>
                         <div class="p-8 flex-grow">
                             <form method="POST" class="space-y-6">
-                                <input type='hidden' name='{{tokens.FormFieldName}}' value='{{tokens.RequestToken}}'>
                                 <div class="space-y-2">
                                     <label class="block text-sm font-semibold text-slate-700">Endpoint Path</label>
                                     <input type="text" name="path" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all" placeholder="e.g. user-profile.json">
