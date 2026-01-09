@@ -2,7 +2,7 @@
   <img src="https://github.com/vicenteyu/boomapi/raw/master/logo.png" height="200" alt="BoomApi Logo">
 </div>
 
-# 🚀 BoomApi: The 16MB Miracle
+# 🚀 BoomApi: The 14MB Miracle
 
 [**简体中文**](#-简体中文) | [**English**](#-english)
 
@@ -25,7 +25,7 @@
 
 | 指标 | 表现 | 备注 |
 | :--- | :--- | :--- |
-| **压缩镜像体积** | **16.53 MB** | 基于 Noble Chiseled 极致裁剪 |
+| **压缩镜像体积** | **14.18 MB** | 基于 Noble Chiseled 极致裁剪 |
 | **冷启动时间** | **< 10ms** | Native AOT 原生编译，无 IL 解释 |
 | **运行时环境** | **Zero Runtime** | 自包含，镜像内无 .NET 虚拟机 |
 | **依赖环境** | **无** | 零依赖，不需安装 .NET Runtime |
@@ -77,7 +77,7 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 
 ### 📊 Unrivaled Performance
 
-- **Compressed Image Size**: `16.53 MB` (Smaller than a RAW photo).
+- **Compressed Image Size**: `14.18 MB` (Smaller than a RAW photo).
 - **Startup Latency**: `< 10ms` (Ready before you can blink).
 - **Runtime Environment**: `Zero Runtime Dependencies` (Self-contained, no .NET VM inside).
 - **Tech Stack**: Built with `.NET 10` + `Native AOT` + `Ubuntu 24.04 Noble Chiseled`.

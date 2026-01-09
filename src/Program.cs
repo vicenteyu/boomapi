@@ -273,7 +273,7 @@ public partial class Program
             {
                 return TypedResults.Problem($"Permission denied on {dataPath}. Please check UID 1654 ownership.");
             }
-        });
+        }).DisableAntiforgery();
 
         app.MapDelete("/delete/{path}", async Task<Results<Ok<string>, ProblemHttpResult>> (string path) =>
         {
