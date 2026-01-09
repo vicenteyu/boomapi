@@ -10,6 +10,7 @@
         <PublishAot>true</PublishAot>
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
         <EnableConfigurationBindingGenerator>true</EnableConfigurationBindingGenerator>
+        <ApplicationIcon>logo.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,11 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- 框架程序集（解决当前 FrameworkAssemblies 错误） -->
         <FrameworkAssemblies Include="Microsoft.AspNetCore.App" />
         <FrameworkAssemblies Include="Microsoft.NETCore.App" />
 
-        <!-- SDK 程序集（解决之前 PrivateSdkAssemblies 错误） -->
         <PrivateSdkAssemblies Include="Microsoft.AspNetCore.Mvc.Core" />
         <PrivateSdkAssemblies Include="Microsoft.AspNetCore.Http" />
         <PrivateSdkAssemblies Include="Microsoft.AspNetCore.Routing" />
