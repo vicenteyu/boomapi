@@ -53,16 +53,31 @@ public partial class Program
         builder.Services.AddAntiforgery();
 
         var dataPath = Path.Combine(AppContext.BaseDirectory, "data");
-        if (!Directory.Exists(dataPath))
+        var initializedFlag = Path.Combine(dataPath, ".initialized");
+        try
         {
-            Directory.CreateDirectory(dataPath);
-        }
+            if (!Directory.Exists(dataPath))
+            {
+                Directory.CreateDirectory(dataPath);
+            }
 
-        if (!Directory.EnumerateFileSystemEntries(dataPath).Any())
+            if (!File.Exists(initializedFlag) && !Directory.EnumerateFileSystemEntries(dataPath).Any())
+            {
+
+                File.WriteAllText(Path.Combine(dataPath, "hello-world.json"), Assets.HelloJson, Encoding.UTF8);
+                File.WriteAllText(Path.Combine(dataPath, "welcome.html"), Assets.WelcomeHtml, Encoding.UTF8);
+                File.WriteAllText(initializedFlag, DateTime.Now.ToString(), Encoding.UTF8);
+
+                Log.Information("Initial samples created successfully.");
+            }
+        }
+        catch (UnauthorizedAccessException ex)
         {
-            File.WriteAllText(Path.Combine(dataPath, "hello-world.json"), Assets.HelloJson, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(dataPath, "welcome.html"), Assets.WelcomeHtml, Encoding.UTF8);
-            File.WriteAllText(Path.Combine(dataPath, ".initialized"), "");
+            Log.Warning("Permission denied on {DataPath}.", dataPath);
+            Log.Fatal(ex, "FATAL: Permission Denied! BoomApi (Running as UID 1654/app) cannot write to: {DataPath}. " +
+                 "FIX: Run 'sudo chown -R 1654:1654 <host_dir>' on your host machine.", dataPath);
+
+            throw;
         }
 
         var app = builder.Build();
@@ -75,7 +90,6 @@ public partial class Program
         app.UseRouting();
         app.UseAntiforgery();
 
-        // --- 首页：英文国际化 + 布局优化 ---
         app.MapGet("/", async (HttpContext context, ILogger<Program> logger) =>
         {
             var list = new DirectoryInfo(dataPath)
@@ -177,7 +191,6 @@ public partial class Program
             return TypedResults.Content(htmlContent, "text/html", Encoding.UTF8);
         });
 
-        // --- 创建页：英文国际化 ---
         app.MapGet("/create", async (HttpContext context, IAntiforgery antiforgery) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
@@ -230,38 +243,59 @@ public partial class Program
 
         app.MapPost("/create", async Task<Results<RedirectHttpResult, ProblemHttpResult>> ([FromForm] string path, [FromForm] string raw) =>
         {
-            if (!FileNameRule().IsMatch(path)) return TypedResults.Problem("Invalid path format.");
-            var file_path = Path.Combine(dataPath, path);
-            if (File.Exists(file_path)) return TypedResults.Problem("Endpoint already exists.");
-            await File.AppendAllTextAsync(file_path, raw, encoding: Encoding.UTF8);
-            return TypedResults.Redirect($"~/");
+            try
+            {
+                if (!FileNameRule().IsMatch(path)) return TypedResults.Problem("Invalid path format.");
+                var file_path = Path.Combine(dataPath, path);
+                if (File.Exists(file_path)) return TypedResults.Problem("Endpoint already exists.");
+                await File.AppendAllTextAsync(file_path, raw, encoding: Encoding.UTF8);
+                return TypedResults.Redirect($"~/");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+            }
         });
 
         app.MapDelete("/delete/{path}", async Task<Results<Ok<string>, ProblemHttpResult>> (string path) =>
         {
-            var file_path = Path.Combine(dataPath, path);
-            if (!File.Exists(file_path)) return TypedResults.Problem("Not found.");
-            File.Delete(file_path);
-            return TypedResults.Ok("Deleted.");
+            try
+            {
+                var file_path = Path.Combine(dataPath, path);
+                if (!File.Exists(file_path)) return TypedResults.Problem("Not found.");
+                File.Delete(file_path);
+                return TypedResults.Ok("Deleted.");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+            }
         });
 
-        app.MapMethods("/raw/{path}", ["GET", "POST", "DELETE", "PUT", "PATCH"], async Task<Results<ContentHttpResult, NotFound>> (string path) =>
+        app.MapMethods("/raw/{path}", ["GET", "POST", "DELETE", "PUT", "PATCH"], async Task<Results<IResult, NotFound>> (string path) =>
         {
-            var file_path = Path.Combine(dataPath, path);
-            if (!File.Exists(file_path)) return TypedResults.NotFound();
-            var content = await File.ReadAllTextAsync(file_path);
-            var contentType = Path.GetExtension(path).ToLower() switch
+            try
             {
-                ".json" => "application/json; charset=utf-8",
-                ".xml" => "application/xml; charset=utf-8",
-                ".html" => "text/html; charset=utf-8",
-                ".js" => "application/javascript; charset=utf-8",
-                ".css" => "text/css; charset=utf-8",
-                ".yaml" or ".yml" => "application/x-yaml; charset=utf-8",
-                ".csv" => "text/csv; charset=utf-8",
-                _ => "text/plain; charset=utf-8"
-            };
-            return TypedResults.Text(content, contentType, Encoding.UTF8);
+                var file_path = Path.Combine(dataPath, path);
+                if (!File.Exists(file_path)) return TypedResults.NotFound();
+                var content = await File.ReadAllTextAsync(file_path);
+                var contentType = Path.GetExtension(path).ToLower() switch
+                {
+                    ".json" => "application/json; charset=utf-8",
+                    ".xml" => "application/xml; charset=utf-8",
+                    ".html" => "text/html; charset=utf-8",
+                    ".js" => "application/javascript; charset=utf-8",
+                    ".css" => "text/css; charset=utf-8",
+                    ".yaml" or ".yml" => "application/x-yaml; charset=utf-8",
+                    ".csv" => "text/csv; charset=utf-8",
+                    _ => "text/plain; charset=utf-8"
+                };
+                return TypedResults.Text(content, contentType, Encoding.UTF8);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return TypedResults.Problem("Permission denied on {DataPath}.", dataPath);
+            }
         });
 
         app.Run();
