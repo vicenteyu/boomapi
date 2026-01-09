@@ -281,7 +281,8 @@ public partial class Program
                                             placeholder="例如: document.txt">
                                     </div>
                                     <p class="text-xs text-gray-500">
-                                        <i class="fa fa-info-circle mr-1"></i> 只支持 数字、字母、- 和 . 。
+                                        <i class="fa fa-info-circle mr-1"></i> 
+                                        只支持 数字、字母、`-` 和 `.` ，且 `-` 和 `.` 不能开头也不能结尾，至少需要两个字符。
                                     </p>
                                 </div>
                     

@@ -1,0 +1,10 @@
+# docker-compose.yml
+services:
+  boomapi:
+    image: vicenteyu105/boomapi:latest
+    container_name: boomapi
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./my-mocks:/app/wwwroot
+    restart: always

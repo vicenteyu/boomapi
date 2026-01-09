@@ -4,6 +4,12 @@ WORKDIR /app
 
 # 从 GitHub Actions 构建产物中复制
 COPY ./docker-build/BoomApi .
+
+# 关键步骤：赋予执行权限 (AOT 二进制文件必须有此权限)
+# 注意：chiseled 镜像没有 shell，所以我们通常在构建阶段就处理好权限
+# 或者使用 COPY 的 --chmod 选项（推荐）
+COPY --chmod=755 ./docker-build/BoomApi ./BoomApi
+
 # 复制静态资源
 COPY src/wwwroot ./wwwroot
 

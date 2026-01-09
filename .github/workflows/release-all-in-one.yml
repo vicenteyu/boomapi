@@ -2,7 +2,7 @@ name: Release BoomApi (All-in-One)
 
 on:
   push:
-    tags: [ 'v*.*.*' ]
+    tags: ["v*.*.*"]
 
 jobs:
   # ---------------------------------------------------
@@ -27,7 +27,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: "10.0.x"
 
       - name: Install Dependencies (Linux)
         if: matrix.os == 'ubuntu-latest'
@@ -109,10 +109,28 @@ jobs:
           context: .
           # 注意：这里需要你根目录有一个 Dockerfile.fast，
           # 它的逻辑是直接 COPY ./docker-build/BoomApi
-          file: ./Dockerfile.fast 
+          file: ./Dockerfile.fast
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/boomapi:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/boomapi:${{ github.ref_name }}
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
+  # ---------------------------------------------------
+  # Job 4: 同步 README 到 Docker Hub 首页
+  # ---------------------------------------------------
+  sync-dockerhub-readme:
+    needs: [deploy-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/boomapi
+          short-description: "🚀 16MB .NET 10 Magic: World's tiniest Native AOT Mock tool. Fast, Chiseled, and Zero-runtime."
+          readme-filepath: ./README.md
