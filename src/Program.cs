@@ -52,6 +52,19 @@ public partial class Program
         builder.Services.AddOpenApi();
         builder.Services.AddAntiforgery();
 
+        var dataPath = Path.Combine(AppContext.BaseDirectory, "data");
+        if (!Directory.Exists(dataPath))
+        {
+            Directory.CreateDirectory(dataPath);
+        }
+
+        if (!Directory.EnumerateFileSystemEntries(dataPath).Any())
+        {
+            File.WriteAllText(Path.Combine(dataPath, "hello-world.json"), Assets.HelloJson, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(dataPath, "welcome.html"), Assets.WelcomeHtml, Encoding.UTF8);
+            File.WriteAllText(Path.Combine(dataPath, ".initialized"), "");
+        }
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -59,26 +72,15 @@ public partial class Program
             app.MapOpenApi();
         }
 
-        var dataPath = Directory.Exists("/data")
-            ? "/data"
-            : Path.Combine(AppContext.BaseDirectory, "wwwroot");
-
-        if (!Directory.Exists(dataPath))
-        {
-            try { Directory.CreateDirectory(dataPath); } catch { /* Log error */ }
-        }
-
-        app.Environment.WebRootPath = dataPath;
-
-        app.UseStaticFiles();
         app.UseRouting();
         app.UseAntiforgery();
 
         // --- 首页：英文国际化 + 布局优化 ---
-        app.MapGet("/", async ([FromServices] IWebHostEnvironment env, HttpContext context, ILogger<Program> logger) =>
+        app.MapGet("/", async (HttpContext context, ILogger<Program> logger) =>
         {
-            var list = new DirectoryInfo(env.WebRootPath)
+            var list = new DirectoryInfo(dataPath)
                 .EnumerateFiles()
+                .Where(f => !f.Name.StartsWith('.'))
                 .OrderByDescending(p => p.LastWriteTime);
 
             var scheme = context.Request.Headers.TryGetValue("X-Forwarded-Proto", out StringValues _scheme) ? _scheme.First() : context.Request.Scheme;
@@ -155,28 +157,24 @@ public partial class Program
                             </a>
                         </div>
                     </div>
-                    <script src="/scripts/file-actions.js"></script>
+                    <script>
+                        "use strict";
+                        function viewFile(filePath) {
+                            window.open(`/raw/${filePath}`);
+                        }
+                        function deleteFile(filePath) {
+                            if(confirm('Are you sure you want to delete this endpoint?')) {
+                                fetch(`/delete/${filePath}`, { method: 'DELETE' })
+                                    .then(res => { if(res.ok) location.reload(); })
+                                    .catch(error => console.error('Delete failed:', error));
+                            }
+                        }
+                    </script>
                 </body>
                 </html>
                 """;
 
             return TypedResults.Content(htmlContent, "text/html", Encoding.UTF8);
-        });
-
-        app.MapGet("/scripts/file-actions.js", () =>
-        {
-            var jsContent = @"""use strict"";
-                function viewFile(filePath) {
-                    window.open(`/raw/${filePath}`);
-                }
-                function deleteFile(filePath) {
-                    if(confirm('Are you sure you want to delete this endpoint?')) {
-                        fetch(`/delete/${filePath}`, { method: 'DELETE' })
-                            .then(res => { if(res.ok) location.reload(); })
-                            .catch(error => console.error('Delete failed:', error));
-                    }
-                }";
-            return TypedResults.Text(jsContent, "application/javascript");
         });
 
         // --- 创建页：英文国际化 ---
@@ -230,34 +228,38 @@ public partial class Program
             return TypedResults.Content(htmlContent, "text/html", Encoding.UTF8);
         });
 
-        app.MapPost("/create", async Task<Results<RedirectHttpResult, ProblemHttpResult>> ([FromForm] string path, [FromForm] string raw, [FromServices] IWebHostEnvironment env) =>
+        app.MapPost("/create", async Task<Results<RedirectHttpResult, ProblemHttpResult>> ([FromForm] string path, [FromForm] string raw) =>
         {
             if (!FileNameRule().IsMatch(path)) return TypedResults.Problem("Invalid path format.");
-            var file_path = Path.Combine(env.WebRootPath, path);
+            var file_path = Path.Combine(dataPath, path);
             if (File.Exists(file_path)) return TypedResults.Problem("Endpoint already exists.");
             await File.AppendAllTextAsync(file_path, raw, encoding: Encoding.UTF8);
             return TypedResults.Redirect($"~/");
         });
 
-        app.MapDelete("/delete/{path}", async Task<Results<Ok<string>, ProblemHttpResult>> (string path, [FromServices] IWebHostEnvironment env) =>
+        app.MapDelete("/delete/{path}", async Task<Results<Ok<string>, ProblemHttpResult>> (string path) =>
         {
-            var file_path = Path.Combine(env.WebRootPath, path);
+            var file_path = Path.Combine(dataPath, path);
             if (!File.Exists(file_path)) return TypedResults.Problem("Not found.");
             File.Delete(file_path);
             return TypedResults.Ok("Deleted.");
         });
 
-        app.MapMethods("/raw/{path}", ["GET", "POST", "DELETE", "PUT", "PATCH"], async Task<Results<ContentHttpResult, NotFound>> (string path, [FromServices] IWebHostEnvironment env) =>
+        app.MapMethods("/raw/{path}", ["GET", "POST", "DELETE", "PUT", "PATCH"], async Task<Results<ContentHttpResult, NotFound>> (string path) =>
         {
-            var file_path = Path.Combine(env.WebRootPath, path);
+            var file_path = Path.Combine(dataPath, path);
             if (!File.Exists(file_path)) return TypedResults.NotFound();
             var content = await File.ReadAllTextAsync(file_path);
             var contentType = Path.GetExtension(path).ToLower() switch
             {
-                ".json" => "application/json",
-                ".xml" => "application/xml",
-                ".html" => "text/html",
-                _ => "text/plain"
+                ".json" => "application/json; charset=utf-8",
+                ".xml" => "application/xml; charset=utf-8",
+                ".html" => "text/html; charset=utf-8",
+                ".js" => "application/javascript; charset=utf-8",
+                ".css" => "text/css; charset=utf-8",
+                ".yaml" or ".yml" => "application/x-yaml; charset=utf-8",
+                ".csv" => "text/csv; charset=utf-8",
+                _ => "text/plain; charset=utf-8"
             };
             return TypedResults.Text(content, contentType, Encoding.UTF8);
         });

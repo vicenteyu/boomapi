@@ -35,7 +35,7 @@
 使用 Docker 一键运行（建议挂载数据卷以持久化数据）：
 
 ```bash
-docker run -d -p 8080:8080 -v $(pwd)/mocks:/data vicenteyu105/boomapi:latest
+docker run -d -p 8080:8080 -v $(pwd)/mocks:/app/data vicenteyu105/boomapi:latest
 ```
 
 
@@ -74,7 +74,7 @@ Defining an API is as simple as creating a file. No complex JSON schemas or heav
 Run with Docker:
 
 ```bash
-docker run -d -p 8080:8080 -v $(pwd)/mocks:/data vicenteyu105/boomapi:latest
+docker run -d -p 8080:8080 -v $(pwd)/mocks:/app/data vicenteyu105/boomapi:latest
 ```
 
 Access the dashboard at http://localhost:8080.

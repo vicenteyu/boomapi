@@ -1,15 +1,9 @@
 # [Dockerfile.fast]
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled
 WORKDIR /app
-
-# 1. 复制主程序并赋权 
+# 复制主程序并赋权 
 COPY --chmod=755 ./docker-build/BoomApi ./BoomApi
-
-# 2. 复制示例数据
-COPY --chown=1654:1654 src/wwwroot/sample.json /data/hello-world.json
-COPY --chown=1654:1654 src/wwwroot/welcome.html /data/welcome.html
-
-# 3. 声明挂载点 
+# 声明挂载点 
 VOLUME /data
 
 EXPOSE 8080
