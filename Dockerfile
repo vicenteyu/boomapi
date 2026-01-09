@@ -10,7 +10,7 @@ WORKDIR "/src/src"
 RUN dotnet publish "BoomApi.csproj" -c Release -r linux-x64 --self-contained -p:PublishAot=true -o /app/publish
 
 # 运行阶段
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-jammy-chiseled
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled
 WORKDIR /app
 COPY --from=build /app/publish .
 # 别忘了 AOT 镜像通常需要开放 8080 端口

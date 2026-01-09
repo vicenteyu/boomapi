@@ -1,10 +1,10 @@
-# 使用最轻量级的运行时基础镜像
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-jammy-chiseled
+# 修正：将 jammy 改为 noble
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled
 WORKDIR /app
 
-# 从 GitHub Actions 下载的 ./docker-build 目录复制产物
+# 从 GitHub Actions 构建产物中复制
 COPY ./docker-build/BoomApi .
-# 如果有静态资源，也需要复制
+# 复制静态资源
 COPY src/wwwroot ./wwwroot
 
 EXPOSE 8080

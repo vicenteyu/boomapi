@@ -67,5 +67,5 @@ dotnet restore -r linux-x64
 dotnet publish -c Release -r linux-x64 --no-restore /p:PublishAot=true -o ./publish
 ```
 
-###📝 License
+### 📝 License
 Distributed under the MIT License. See LICENSE for more information.
