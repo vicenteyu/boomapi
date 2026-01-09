@@ -35,12 +35,7 @@
 使用 Docker 一键运行（建议挂载数据卷以持久化数据）：
 
 ```bash
-mkdir -p $(pwd)/mocks && \
-docker run -d \
-  --name boomapi \
-  -p 8080:8080 \
-  -v $(pwd)/mocks:/app/wwwroot \
-  vicenteyu105/boomapi:latest
+docker run -d -p 8080:8080 -v $(pwd)/mocks:/data vicenteyu105/boomapi:latest
 ```
 
 
@@ -79,12 +74,7 @@ Defining an API is as simple as creating a file. No complex JSON schemas or heav
 Run with Docker:
 
 ```bash
-mkdir -p $(pwd)/mocks && \
-docker run -d \
-  --name boomapi \
-  -p 8080:8080 \
-  -v $(pwd)/mocks:/app/wwwroot \
-  vicenteyu105/boomapi:latest
+docker run -d -p 8080:8080 -v $(pwd)/mocks:/data vicenteyu105/boomapi:latest
 ```
 
 Access the dashboard at http://localhost:8080.
@@ -102,5 +92,6 @@ dotnet publish -c Release -r linux-x64 --no-restore /p:PublishAot=true -o ./publ
 ### 📝 License
 Distributed under the MIT License. See LICENSE for more information.
 
-<hr />
+---
+
 Built with ❤️ and .NET 10

@@ -1,14 +1,16 @@
-# 修正：将 jammy 改为 noble
+# [Dockerfile.fast]
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled
 WORKDIR /app
 
-# 关键步骤：赋予执行权限 (AOT 二进制文件必须有此权限)
-# 注意：chiseled 镜像没有 shell，所以我们通常在构建阶段就处理好权限
-# 或者使用 COPY 的 --chmod 选项（推荐）
+# 复制程序并赋权
 COPY --chmod=755 ./docker-build/BoomApi ./BoomApi
 
-# 复制静态资源
-COPY src/wwwroot ./wwwroot
+# 预创建 /data 目录并指定所有者为 chiseled 默认用户 app (UID 1654)
+USER 0
+RUN mkdir -p /data && chown 1654:1654 /data
+VOLUME /data
 
+# 切回非 root 用户运行
+USER 1654
 EXPOSE 8080
 ENTRYPOINT ["./BoomApi"]
