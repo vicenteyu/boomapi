@@ -360,5 +360,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/BoomApi/wwwroot
-/src/wwwroot
+!src/wwwroot/
