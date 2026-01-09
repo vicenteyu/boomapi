@@ -1,4 +1,6 @@
-<img src="https://github.com/vicenteyu/boomapi/raw/master/logo.png" height="200px" style="max-width: 100%; height: auto; max-height: 200px;">
+<div align="center">
+  <img src="https://github.com/vicenteyu/boomapi/raw/master/logo.png" height="200" alt="BoomApi Logo">
+</div>
 
 # 🚀 BoomApi: The 16MB Miracle
 
@@ -10,7 +12,7 @@
 
 **BoomApi** 是一个基于 **.NET 10 Native AOT** 构建的极致轻量级 API Mock 工具。它采用“文件系统即路由”的设计逻辑，通过简单的文件操作或 Web UI 即可快速定义接口并返回原始（Raw）内容。
 
-**可能是地球上最轻量的 .NET 10 生产力工具。**
+**可能是地球上最轻量的 .NET 10 API Mock工具。**
 
 ### ✨ 核心特性
 * **⚡ 巅峰性能**：原生编译，零 GC 开销，启动速度低于 10ms。
