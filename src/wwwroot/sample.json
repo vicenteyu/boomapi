@@ -1,0 +1,15 @@
+{
+  "title": "Welcome to BoomApi / 欢迎使用 BoomApi",
+  "stats": {
+    "size": "16.53 MB",
+    "speed": "< 10ms",
+    "engine": ".NET 10 Native AOT"
+  },
+  "features": [
+    "Ultra-lightweight / 极致轻量",
+    "File-system routing / 文件即路由",
+    "Zero runtime / 零运行时依赖"
+  ],
+  "github": "https://github.com/vicenteyu/boomapi",
+  "tip": "You can edit this in /data/hello-world.json / 你可以在 /data 目录中直接编辑此文件"
+}

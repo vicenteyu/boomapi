@@ -6,5 +6,5 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./my-mocks:/app/data
+      - ./my-mocks:/data
     restart: always
