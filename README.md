@@ -44,7 +44,7 @@ docker run -d \
 * **🎨 Built-in Dashboard**: Minimalist responsive UI powered by Tailwind CSS for easy management.
 * **🔒 Proxy Ready**: Full support for X-Forwarded-Proto and X-Forwarded-Host headers.
 
-###🚀 Quick Start
+### 🚀 Quick Start
 Run with Docker:
 
 ```bash
@@ -57,7 +57,7 @@ docker run -d \
 
 Access the dashboard at http://localhost:8080.
 
-###🛠️ Build from Source
+### 🛠️ Build from Source
 Ensure you have .NET 10 SDK and C++ Build Tools (Clang & zlib1g-dev for Linux) installed.
 ```bash
 # 1. Restore native assets for Linux
