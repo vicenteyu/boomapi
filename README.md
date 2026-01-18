@@ -14,14 +14,22 @@
 
 **BoomApi** 是一个基于 **.NET 10 Native AOT** 构建的极致轻量级 API Mock 工具。它采用“文件系统即路由”的设计逻辑，通过简单的文件操作或 Web UI 即可快速定义接口并返回原始（Raw）内容。
 
-**可能是地球上最轻量的 .NET 10 API Mock工具。**
+**可能是地球上最轻量的 .NET 10 API Mock 工具。**
 
 ### ✨ 核心特性
-* **⚡ 巅峰性能**：原生编译，零 GC 开销，启动速度低于 10ms。
-* **📦 极简部署**：Docker 镜像仅约 `14.18 MB`，无需安装 .NET 运行时，自包含执行。
-* **📂 文件即路由**：`/raw/example.json` 自动对应物理路径 `mocks/example.json`，支持所有 HTTP 方法（`GET`, `POST`, `PUT`, `DELETE`, `PATCH`）。
-* **🎨 可视化管理**：内建基于 `Tailwind CSS` 的响应式 UI，支持在线创建、预览及删除。
-* **🔒 生产就绪**：完美兼容反向代理（`X-Forwarded Headers`），支持 `Docker` 数据卷持久化。
+* **⚡ 巅峰性能**：原生编译，启动速度低于 `10ms`，零运行时依赖，极致节省资源。
+* **📦 极简部署**：Docker 镜像仅约 `14 MB`，基于 Ubuntu Chiseled 构建，安全且精简。
+* **📂 文件即路由**：`/raw/example.json` 自动对应 `data/example.json`，支持所有 HTTP 方法。
+* **⏳ 延迟模拟**：支持文件名约定（如 `api.delay-500ms.json`），自动模拟网络延迟，方便测试前端 `Loading` 状态。
+* **🎨 可视化管理**：内建基于 `Tailwind CSS` 的响应式 UI，支持在线创建、预览、管理 Mock 文件及延迟状态。
+
+### 📂 文件即路由 & 延迟模拟
+定义一个接口就像创建一个文件一样简单。无需复杂的配置或数据库：
+
+- `data/health.json` --> `http://host:8080/raw/health.json`
+- **进阶：模拟延迟**：只需在文件名中包含 `.delay-{ms}ms` 关键字：
+  - `data/user.delay-2000ms.json` --> 访问该接口将自动延迟 **`2秒`** 返回。
+  - 管理后台会通过琥珀色时钟图标 ⏳ 自动标注这些具有延迟的接口。
 
 ### 📊 性能规格 (Performance Stats)
 
@@ -34,7 +42,7 @@
 
 ### 🚀 快速启动
 
-使用 Docker 一键运行（建议挂载数据卷以持久化数据）：
+使用 Docker 一键运行：
 
 ```bash
 # 创建本地目录
@@ -63,6 +71,13 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 访问 http://localhost:8080 即可进入管理后台。
 
 ---
+<div align="center">
+  <img src="https://github.com/vicenteyu/boomapi/raw/master/snapshot/snapshot-1.png">
+</div>
+<div align="center">
+  <img src="https://github.com/vicenteyu/boomapi/raw/master/snapshot/snapshot-2.png">
+</div>
+---
 
 "**Small, but Uncompromising.**" 感谢所有对极致性能有追求的开发者。如果你喜欢这个项目，请为它点亮一颗 Star 🌟。
 
@@ -77,11 +92,20 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 **BoomApi** is an ultra-lightweight API Mocking tool built with **.NET 10 Native AOT**. It follows a "File System as Routing" philosophy, allowing you to define endpoints and return raw content through simple file operations or a sleek Web UI.
 
 ### ✨ Key Features
-* **⚡ Blazing Fast**: Native compilation, zero GC overhead, sub-10ms startup time.
-* **📦 Tiny Footprint**: `14.18 MB` Docker image, self-contained, no .NET runtime required.
-* **📂 File-based Routing**: `/raw/test.json` automatically maps to `mocks/test.json`. Supports all HTTP methods including `GET`, `POST`, `PUT`, `DELETE`, and `PATCH`.
-* **🎨 Built-in Dashboard**: Minimalist responsive UI powered by `Tailwind CSS` for easy management.
-* **🔒 Proxy Ready**: Full support for `X-Forwarded-Proto` and `X-Forwarded-Host` headers.
+* **⚡ Peak Performance**: Native compilation, `<10ms` startup time, zero runtime dependencies.
+* **📦 Minimal Footprint**: Docker image is only `~14 MB`, built on Ubuntu Chiseled for maximum security and efficiency.
+* **📂 File-system as Routing**: `/raw/example.json` automatically maps to `data/example.json`. Supports all HTTP verbs.
+* **⏳ Latency Simulation**: Built-in support for filename conventions (e.g., `api.delay-500ms.json`) to simulate network throttling and test frontend `loading` states.
+* **🎨 Visual Dashboard**: Embedded responsive UI powered by `Tailwind CSS` for creating, previewing, and managing mock files.
+
+### 📂 Philosophy: File-system as Routing
+Defining an API is as simple as creating a file. No complex JSON schemas or databases required:
+
+- `data/health.json` --> `http://host:8080/raw/health.json`
+- **Advanced**: Latency Throttling Simply include the `.delay-{ms}ms` keyword in the filename:
+ - `data/api.delay-2000ms.json` --> The API will introduce a **`2s`** delay before responding.
+ - The dashboard automatically detects this and displays a dedicated "Hourglass" ⏳ tag.
+
 
 ### 📊 Unrivaled Performance
 
@@ -89,12 +113,6 @@ sudo chown -R 1654:1654 ./your-data-dir ./your-logs-dir
 - **Startup Latency**: `< 10ms` (Ready before you can blink).
 - **Runtime Environment**: `Zero Runtime Dependencies` (Self-contained, no .NET VM inside).
 - **Tech Stack**: Built with `.NET 10` + `Native AOT` + `Ubuntu 24.04 Noble Chiseled`.
-
-### 📂 Philosophy: File-system as Routing
-
-Defining an API is as simple as creating a file. No complex JSON schemas or heavy DBs required:
-
-- `mocks/health.json` --> `GET/POST http://host:8080/raw/health.json`
 
 ### 🚀 Quick Start
 
@@ -112,7 +130,7 @@ docker run -d \
 ```
 
 ### 🔒 Permissions & Security
-This image is built on Ubuntu Chiseled and runs as a non-root user (UID 1654). If you are using bind mounts, you must adjust the host directory permissions, or the application will crash due to lack of write access:
+This image is built on Ubuntu Chiseled and runs as a non-root user (**UID 1654**). If you are using bind mounts, you must adjust the host directory permissions, or the application will crash due to lack of write access:
 
 ```Bash
 # Run on your host machine to grant ownership to the container user
